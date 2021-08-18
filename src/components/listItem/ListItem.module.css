@@ -1,0 +1,51 @@
+.itemContainer {
+  display: flex;
+  position: inherit;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+
+  background: #FFFFFF;
+  border-radius: 9999px;
+  height: 46px;
+  width: 518px;
+  margin-bottom: 17px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itemContent {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 16px;
+  margin-right: auto;
+}
+
+.itemContent.done {
+  text-decoration-line: line-through;
+  color: #A9A9A9;
+}
+
+.saveBtn {
+  width: 64px;
+  height: 36px;
+  left: 829px;
+  top: 371px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+
+  color: #FFFFFF;
+
+  background: #585292;
+  border-radius: 999px;
+  margin-right: 6px;
+  border: 0;
+}
+
+.todoInput {
+  width: 100%;
+}

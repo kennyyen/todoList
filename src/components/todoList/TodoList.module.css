@@ -1,0 +1,71 @@
+.todoList {
+  position: absolute;
+  width: 720px;
+  height: 620px;
+  left: 280px;
+  top: 42px;
+
+  background: #F5F5F5;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 61px 0 63px 0;
+  overflow-y: auto;
+}
+
+.title {
+  width: 63px;
+  height: 28px;
+  left: 381px;
+  top: 260px;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 28px;
+
+  color: #000000;
+}
+
+.todoInput {
+  padding-left: 20px;
+  position: inherit;
+  left: 29.77%;
+  right: 29.77%;
+  top: 76.81%;
+  bottom: 16.81%;
+
+  background: #FFFFFF;
+  border-radius: 9999px;
+  outline: none;
+  height: 46px;
+  width: 498px;
+  left: 381px;
+  top: 553px;
+  border-radius: 9999px;
+  border: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.todoInput::placeholder {
+  color: #BCBCBC;
+}
+
+.controlBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 518px;
+  margin-bottom: 16px;
+}
+
+.filter {
+  height: 29px;
+  width: 110px;
+  left: 0px;
+  top: 0px;
+  border-radius: 10px;
+}

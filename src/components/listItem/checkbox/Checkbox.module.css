@@ -1,0 +1,36 @@
+.checkboxContainer {
+  padding-left: 20px;
+  display: flex;
+}
+
+.input {
+  display: none;
+}
+
+.checkbox {
+  right: 91.89%;
+  bottom: 26.09%;
+
+  border: 0px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  height: 22px;
+  width: 22px;
+  left: 20px;
+  top: 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.checkboxImg {
+  user-select: none;
+  height: 22px;
+}
+
+.checkbox.done {
+  background-image: url('../../../assets/svg/checkbox.svg');
+}
+
+.checkbox.undone {
+  background-image: url('../../../assets/svg/checkboxUndone.svg');
+}
