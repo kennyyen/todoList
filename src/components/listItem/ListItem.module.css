@@ -49,3 +49,7 @@
 .todoInput {
   width: 100%;
 }
+
+.inputContainer {
+  flex: auto;
+}

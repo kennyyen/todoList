@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../todoList/TodoList.module.css'
 import { useAppDispatch } from '../../shared-modules/hooks';
-import { addTodo } from '../todoList/todoListSlice'
+import { addTodoToDB } from '../todoList/todoListSlice'
 
 
 
@@ -16,7 +16,10 @@ export function TodoInput() {
     const handleOnEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             if (inputValue !== "") {
-                dispatch(addTodo(inputValue));
+                dispatch(addTodoToDB({
+                    title: inputValue,
+                    completed: false
+                }));
             }
             setInputValue("");
         }

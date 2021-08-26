@@ -1,7 +1,7 @@
 import styles from './Checkbox.module.css'
 import { IitemInterface } from '../ListItem';
 import { useAppDispatch } from '../../../shared-modules/hooks';
-import { toggleDone } from '../../todoList/todoListSlice';
+import { toggleDoneDB } from '../../todoList/todoListSlice';
 import checkMark from '../../../assets/svg/checkIcon.svg';
 
 const Checkbox = ({ status, id }: IitemInterface) => {
@@ -14,9 +14,9 @@ const Checkbox = ({ status, id }: IitemInterface) => {
         checked={status === 'done'}
         id={id}
         onChange={(e) =>
-          dispatch(toggleDone({
+          dispatch(toggleDoneDB({
             id: id,
-            done: e.target.checked
+            body: { completed: e.target.checked }
           }))}
       />
       {status === 'done'

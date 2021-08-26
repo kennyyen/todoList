@@ -4,7 +4,7 @@ import DropdownMenu from './dropdownMenu/DropdownMenu';
 import styles from './ListItem.module.css';
 import inputStyle from '../todoList/TodoList.module.css'
 import { useAppDispatch } from '../../shared-modules/hooks';
-import { editTodo, toggleEditMode } from '../todoList/todoListSlice'
+import { editTodoDB, toggleEditMode } from '../todoList/todoListSlice'
 
 export interface IitemInterface {
     id: string
@@ -29,14 +29,17 @@ export function ListItem(props: IitemInterface) {
     }
     const handleInputOnSave = () => {
         if (inputValue !== "") {
-            dispatch(editTodo({ id, inputValue }));
+            dispatch(editTodoDB({
+                body: { title: inputValue },
+                id
+            }));
         }
         setInputValue(inputValue);
         dispatch(toggleEditMode(id));
     }
     return (editMode
         ? <div className={styles.itemContainer}>
-            <div>
+            <div className={styles.inputContainer}>
                 <input
                     className={`${inputStyle.todoInput} ${styles.todoInput}`}
                     aria-label="Set increment amount"

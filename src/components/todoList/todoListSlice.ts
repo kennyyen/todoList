@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../shared-modules/store';
-import { fetchCount } from './todoListAPI';
+import { fetchTodoList, postTodoList, patchTodoList, deleteTodoList } from './todoListAPI';
 
 export interface TodoListState {
   items: any[];
@@ -12,17 +12,104 @@ const initialState: TodoListState = {
   filter: 'all',
 };
 
+interface TodoListFetchedData {
+  id: string,
+  title: string,
+  completed: boolean
+}
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount: number) => {
-    const response = await fetchCount(amount);
+export const fetchTodoListAsync = createAsyncThunk(
+  'todoList/fetchTodoList',
+  async () => {
+    const response = await fetchTodoList();
+    const data = await response.json();
+
+    // check for error response
+    if (!response.ok) {
+      // get error message from body or default to response statusText
+      const error = (data && data.message) || response.statusText;
+      return Promise.reject(error);
+    }
     // The value we return becomes the `fulfilled` action payload
-    return response.data;
+    return data;
+  }
+);
+export const addTodoToDB = createAsyncThunk(
+  'todoList/addTodoToDB',
+  async (body: any) => {
+    const requestOptions = {
+      body: JSON.stringify(body)
+    };
+    const response = await postTodoList(requestOptions);
+    const data = await response.json();
+
+    // check for error response
+    if (!response.ok) {
+      // get error message from body or default to response statusText
+      const error = (data && data.message) || response.statusText;
+      return Promise.reject(error);
+    }
+    // The value we return becomes the `fulfilled` action payload
+    return data;
+  });
+
+export const editTodoDB = createAsyncThunk(
+  'todoList/editTodoDB',
+  async ({ body, id }: { body: any, id: string }) => {
+    const requestOptions = {
+      body: JSON.stringify(body)
+    };
+    const response = await patchTodoList(requestOptions, id);
+    const data = await response.json();
+
+    // check for error response
+    if (!response.ok) {
+      // get error message from body or default to response statusText
+      const error = (data && data.message) || response.statusText;
+      return Promise.reject(error);
+    }
+    // The value we return becomes the `fulfilled` action payload
+    return data;
+  }
+);
+
+export const deleteTodoDB = createAsyncThunk(
+  'todoList/deleteTodoDB',
+  async (id: string) => {
+    const response = await deleteTodoList(id);
+    const data = await response.json();
+
+    // check for error response
+    if (!response.ok) {
+      // get error message from body or default to response statusText
+      const error = (data && data.message) || response.statusText;
+      return Promise.reject(error);
+    }
+    // The value we return becomes the `fulfilled` action payload
+    return id;
+  }
+);
+export const toggleDoneDB = createAsyncThunk(
+  'todoList/toggleDoneDB',
+  async ({ body, id }: { body: any, id: string }) => {
+    const requestOptions = {
+      body: JSON.stringify(body)
+    };
+    const response = await patchTodoList(requestOptions, id);
+    const data = await response.json();
+
+    // check for error response
+    if (!response.ok) {
+      // get error message from body or default to response statusText
+      const error = (data && data.message) || response.statusText;
+      return Promise.reject(error);
+    }
+    // The value we return becomes the `fulfilled` action payload
+    return data;
   }
 );
 
@@ -31,47 +118,6 @@ export const todoListSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    addTodo: (state, action) => {
-      const generateKey = () => {
-        return `todo_${new Date().getTime()}`;
-      };
-      const id = generateKey();
-      const newItem = {
-        id,
-        key: id,
-        status: 'undone',
-        content: action.payload,
-        editMode: false,
-      };
-      state.items = [...state.items, newItem];
-    },
-    deleteTodo: (state, action) => {
-      const rowToChange = state.items.findIndex(item => {
-        return item.id === action.payload;
-      });
-      state.items = [...state.items.slice(0, rowToChange),
-      ...state.items.slice(rowToChange + 1)];
-    },
-    editTodo: (state, action) => {
-      const rowToChange = state.items.findIndex(item => {
-        return item.id === action.payload.id;
-      });
-
-      const newTodoList = [...state.items];
-      newTodoList[rowToChange].content = action.payload.inputValue;
-
-      state.items = newTodoList;
-    },
-    toggleDone: (state, action) => {
-      const rowToChange = state.items.findIndex(item => {
-        return item.id === action.payload.id;
-      });
-
-      const newTodoList = [...state.items];
-      newTodoList[rowToChange].status = action.payload.done ? 'done' : 'undone';
-
-      state.items = newTodoList;
-    },
     toggleEditMode: (state, action) => {
       const rowToChange = state.items.findIndex(item => {
         return item.id === action.payload;
@@ -84,13 +130,68 @@ export const todoListSlice = createSlice({
     },
     updateFilter: (state, action) => void (state.filter = action.payload),
   },
+  // The `extraReducers` field lets the slice handle actions defined elsewhere,
+  // including actions generated by createAsyncThunk or in other slices.
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodoListAsync.fulfilled, (state, action) => {
+        const newItems = action.payload.map((item: TodoListFetchedData) => ({
+          id: item.id,
+          key: item.id,
+          status: item.completed ? 'done' : 'undone',
+          content: item.title,
+          editMode: false,
+        }));
+        state.items = newItems;
+      })
+      .addCase(addTodoToDB.fulfilled, (state, action) => {
+        const { id, title } = action.payload;
+        const newItem = {
+          id,
+          key: id,
+          status: 'undone',
+          content: title,
+          editMode: false,
+        };
+        state.items = [...state.items, newItem];
+      })
+      .addCase(editTodoDB.fulfilled, (state, action) => {
+        const { id, title } = action.payload;
+        const rowToChange = state.items.findIndex(item => {
+          return item.id === id;
+        });
+
+        const newTodoList = [...state.items];
+        newTodoList[rowToChange].content = title;
+
+        state.items = newTodoList;
+      })
+      .addCase(deleteTodoDB.fulfilled, (state, action) => {
+        const id = action.payload;
+        const rowToChange = state.items.findIndex(item => {
+          return item.id === id;
+        });
+
+        const newTodoList = [...state.items];
+        // state.items = newTodoList.splice(rowToChange, 1);
+        state.items = [...newTodoList.slice(0, rowToChange),
+        ...newTodoList.slice(rowToChange + 1)];
+      })
+      .addCase(toggleDoneDB.fulfilled, (state, action) => {
+        const { id, completed } = action.payload;
+        const rowToChange = state.items.findIndex(item => {
+          return item.id === id;
+        });
+
+        const newTodoList = [...state.items];
+        newTodoList[rowToChange].status = completed ? 'done' : 'undone';
+
+        state.items = newTodoList;
+      });
+  },
 });
 
 export const {
-  addTodo,
-  deleteTodo,
-  editTodo,
-  toggleDone,
   toggleEditMode,
   updateFilter,
 } = todoListSlice.actions;

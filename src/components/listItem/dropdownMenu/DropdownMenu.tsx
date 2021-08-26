@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import styles from './DropdownMenu.module.css';
 import { FaEllipsisH } from 'react-icons/fa';
 import { useAppDispatch } from '../../../shared-modules/hooks';
-import { deleteTodo, toggleEditMode } from '../../todoList/todoListSlice';
+import { deleteTodoDB, toggleEditMode } from '../../todoList/todoListSlice';
 import { IitemInterface } from '../ListItem';
 
 function Dropdown({ status, id }: IitemInterface) {
@@ -21,7 +21,7 @@ function Dropdown({ status, id }: IitemInterface) {
       value: "Edit", onClick: () => dispatch(toggleEditMode(id))
     },
     {
-      value: <div className={styles.delete}>Delete</div>, onClick: () => dispatch(deleteTodo(id))
+      value: <div className={styles.delete}>Delete</div>, onClick: () => dispatch(deleteTodoDB(id))
     }
   ];
   return (
